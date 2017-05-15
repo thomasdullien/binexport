@@ -86,6 +86,11 @@ void FlowGraph::MarkOrphanInstructions(Instructions* instructions) const {
 void FlowGraph::AddExpressionSubstitution(Address address, uint8_t operator_num,
                                           int expression_id,
                                           const std::string& substitution) {
+  if (operator_num > 2) {
+    LOG(INFO) << StringPrintf(
+      "%08" PRIx64 " should probably not have 0x%08" PRIx64 " operands ",
+      address, operator_num);
+  }
   substitutions_[std::make_tuple(address, operator_num, expression_id)] =
       &*string_cache_.insert(substitution).first;
 }

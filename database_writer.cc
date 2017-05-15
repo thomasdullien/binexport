@@ -653,7 +653,6 @@ void DatabaseWriter::InsertExpressionSubstitutions(
                   << database_.EscapeLiteral(replacement) << "),"
                   << kFlushQuery;
             }
-            ++operand_num;
           }
         }
       }
@@ -845,7 +844,10 @@ util::Status DatabaseWriter::Write(const CallGraph& call_graph,
 
     CleanUpZombies(&database_, module_id_);
 
+    LOG(INFO) << "...enabling constraints";
     ExecuteInternalStatement(INIT_CONSTRAINTS, std::to_string(module_id_));
+
+    LOG(INFO) << "...deallocating prepared statements";
     database_.Execute("DEALLOCATE ALL");  // Release all prepared statements.
   }
   ExecuteInternalStatement(MAINTENANCE, std::to_string(module_id_));
